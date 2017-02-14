@@ -33,9 +33,9 @@ object Elem {
   def apply(prefix: String, label: String, attributes: MetaData, scope: NamespaceBinding, minimizeEmpty: Boolean, child: Node*): Elem =
     new Elem(prefix, label, attributes, scope, minimizeEmpty, child: _*)
 
-  def unapplySeq(n: Node) = n match {
+  def unapply(n: Node) = n match {
     case _: SpecialNode | _: Group => None
-    case _                         => Some((n.prefix, n.label, n.attributes, n.scope, n.child))
+    case _                         => Some(n.prefix, n.label, n.attributes, n.scope, n.child)
   }
 
   import scala.sys.process._
@@ -50,19 +50,6 @@ object Elem {
    */
   @deprecated("To create a scala.sys.process.Process from an xml.Elem, please use Process(elem.text.trim).", "2.11.0")
   implicit def xmlToProcess(command: scala.xml.Elem): ProcessBuilder = Process(command.text.trim)
-
-  @deprecated("To create a scala.sys.process.Process from an xml.Elem, please use Process(elem.text.trim).", "2.11.0")
-  implicit def processXml(p: Process.type) = new {
-    /**
-     * Creates a [[scala.sys.process.ProcessBuilder]] from a Scala XML Element.
-     * This can be used as a way to template strings.
-     *
-     * @example {{{
-     * apply(<x> {dxPath.absolutePath} --dex --output={classesDexPath.absolutePath} {classesMinJarPath.absolutePath}</x>)
-     * }}}
-     */
-    def apply(command: Elem): ProcessBuilder = Process(command.text.trim)
-  }
 }
 
 /**

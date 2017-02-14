@@ -24,7 +24,7 @@ object Utility extends AnyRef with parsing.TokenTests {
 
   // [Martin] This looks dubious. We don't convert StringBuilders to
   // Strings anywhere else, why do it here?
-  implicit def implicitSbToString(sb: StringBuilder) = sb.toString()
+  implicit def implicitSbToString(sb: StringBuilder): String = sb.toString()
 
   // helper for the extremely oft-repeated sequence of creating a
   // StringBuilder, passing it around, and then grabbing its String.
@@ -45,8 +45,8 @@ object Utility extends AnyRef with parsing.TokenTests {
    *  Precondition: node is not a text node (it might be trimmed)
    */
   def trim(x: Node): Node = x match {
-    case Elem(pre, lab, md, scp, child@_*) =>
-      val children = child flatMap trimProper
+    case Elem(pre, lab, md, scp, child) =>
+      val children: Seq[Node] = child flatMap trimProper
       Elem(pre, lab, md, scp, children.isEmpty, children: _*)
   }
 
@@ -55,7 +55,7 @@ object Utility extends AnyRef with parsing.TokenTests {
    *  are not `Text` nodes are unaffected.
    */
   def trimProper(x: Node): Seq[Node] = x match {
-    case Elem(pre, lab, md, scp, child@_*) =>
+    case Elem(pre, lab, md, scp, child) =>
       val children = child flatMap trimProper
       Elem(pre, lab, md, scp, children.isEmpty, children: _*)
     case Text(s) =>
@@ -77,9 +77,9 @@ object Utility extends AnyRef with parsing.TokenTests {
    *  (prefixes are ignored)
    */
   def sort(n: Node): Node = n match {
-    case Elem(pre, lab, md, scp, child@_*) =>
+    case Elem(pre, lab, md, scp, child) =>
       val children = child map sort
-      Elem(pre, lab, sort(md), scp, children.isEmpty, children: _*)
+      Elem.apply(pre, lab, sort(md), scp, children.isEmpty, children: _*)
     case _ => n
   }
 
